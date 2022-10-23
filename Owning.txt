@@ -1,0 +1,34 @@
+// Non-owning Views to Resources
+{
+	// The T& is not an owner and can never be a "null reference"; references are always bound to objects.
+	T& ref_to_resource; 
+	// The T* is not an owner, might be null; assumed to be pointing to a single element.
+	T* ptr_to_one_resource; 
+	// T is usually a pointer type (e.g., not_null<int*> and not_null<owner<fun*>>) that must not be nullptr.
+	// T can be any type for which ==nullptr is meaningful.
+	gsl::not_null<T*> ptr_to_one_not_null_resource;  
+	// describes an object that can refer to a contiguous sequence of objects with the first element of the
+	// sequence at position zero. A span can either have a static extent, in which case the number of elements
+	// in the sequence is known at compile-time and encoded in the type, or a dynamic extent. 
+	// If a span has dynamic extent a typical implementation holds two members: a pointer to T and a size. A
+	// span with static extent may have only one member: a pointer to T.
+	std::span<T> view_of_array_of_t;
+	// The class template basic_string_view describes an object that can refer to a constant contiguous 
+	// sequence of char-like objects
+	// A typical implementation holds only two members: a pointer to constant char and a size.
+	std::string_view view_of_string;
+}
+// Ownership of Resources
+{
+	// a T* that owns the object pointed/referred to; might be nullptr. Requires an explicit delete.
+	gsl::owner<T*> ptr_to_one_heap_resource; 
+	// A heap-allocated array. The number of elements are determined at construction and fixed thereafter.
+	// Requires an explicit delete[].
+	dyn_array<T>  ptr_plus_length_of_heap_array_of_t;
+	// unique ownership
+	std::unique_ptr<T> raii_auto_free_heap_resource;
+	// shared ownership
+	std::shared_ptr<T> raii_reference_counted_heap_resource;
+	// a sequence container that encapsulates dynamic size arrays.
+	std::vector<T> raii_dynamic_length_array_of_t;
+}
